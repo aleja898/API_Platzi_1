@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Platzi Store - Crear Producto{% endblock %}
+
+{% block content %}
+<div class="form-page">
+    <div class="card form-card">
+        <div class="header">
+            <h2>Crear Nuevo Producto</h2>
+            <p>Complete los detalles para agregar un producto al inventario.</p>
+            <div class="nav-links">
+                <a href="{% url 'home' %}" class="btn-link">Página de Inicio</a>
+                <span>•</span>
+                <a href="{% url 'consult_products' %}" class="btn-link">Ver Catálogo</a>
+            </div>
+        </div>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message-container {% if message.tags == 'success' %}success{% else %}error{% endif %}">
+                    <span>
+                        {% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}❌{% endif %}
+                    </span>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% if form.errors %}
+            <div class="message-container error">
+                <span>❌</span>
+                <div>
+                    <strong>Por favor, corrija los siguientes errores:</strong>
+                    <ul>
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <li>{{ field|title }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                {{ form.title }}
+                {% if form.title.help_text %}<div class="help-text">{{ form.title.help_text }}</div>{% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.price.id_for_label }}">{{ form.price.label }}</label>
+                {{ form.price }}
+                {% if form.price.help_text %}<div class="help-text">{{ form.price.help_text }}</div>{% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                {{ form.description }}
+                {% if form.description.help_text %}<div class="help-text">{{ form.description.help_text }}</div>{% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.images.id_for_label }}">{{ form.images.label }}</label>
+                {{ form.images }}
+                {% if form.images.help_text %}<div class="help-text">{{ form.images.help_text }}</div>{% endif %}
+            </div>
+            
+            <button type="submit" class="btn btn-primary form-button">
+                Crear Producto
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
