@@ -42,3 +42,19 @@ class ProductForm(forms.Form):
         }),
         help_text='Proporciona la URL de una imagen del producto'
     )
+
+class UpdateProductForm(ProductForm):
+    """
+    Formulario para actualizar un producto existente.
+    Hereda de ProductForm y mantiene los mismos campos y validaciones.
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Personalizar ayuda para el contexto de actualización
+        self.fields['images'].help_text = 'Actualiza la URL de la imagen del producto'
+        
+        # Agregar clases CSS específicas para el formulario de actualización
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({
+                'class': field.widget.attrs.get('class', '') + ' update-form-field'
+            })
