@@ -9,13 +9,9 @@
 <div class="form-page">
     <div class="card form-card">
         <div class="header">
-            <h2>Crear Nuevo Producto</h2>
-            <p>Complete los detalles para agregar un producto al inventario.</p>
-            <div class="nav-links">
-                <a href="{% url 'home' %}" class="btn-link">Página de Inicio</a>
-                <span>•</span>
-                <a href="{% url 'consult_products' %}" class="btn-link">Ver Catálogo</a>
-            </div>
+            <div class="header-icon">✨</div>
+            <h2>Agrega un Nuevo Producto</h2>
+            <p>Completa los detalles para que tu producto aparezca en el catálogo.</p>
         </div>
         
         {% if messages %}
@@ -33,7 +29,7 @@
             <div class="message-container error">
                 <span>❌</span>
                 <div>
-                    <strong>Por favor, corrija los siguientes errores:</strong>
+                    <strong>Por favor, revisa los errores en el formulario:</strong>
                     <ul>
                         {% for field, errors in form.errors.items %}
                             {% for error in errors %}
@@ -47,13 +43,29 @@
 
         <form method="post" novalidate>
             {% csrf_token %}
-            {% for field in form %}
-                <div class="form-group">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.help_text %}<div class="help-text">{{ field.help_text }}</div>{% endif %}
+
+            <div class="form-grid">
+                <div class="form-group grid-full">
+                    <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+                    {{ form.title }}
                 </div>
-            {% endfor %}
+                
+                <div class="form-group grid-half">
+                    <label for="{{ form.price.id_for_label }}">{{ form.price.label }}</label>
+                    {{ form.price }}
+                </div>
+                
+                <div class="form-group grid-half">
+                    <label for="{{ form.images.id_for_label }}">{{ form.images.label }}</label>
+                    {{ form.images }}
+                    <div class="help-text">{{ form.images.help_text }}</div>
+                </div>
+
+                <div class="form-group grid-full">
+                    <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+                    {{ form.description }}
+                </div>
+            </div>
             
             <button type="submit" class="btn btn-primary form-button">
                 Crear Producto

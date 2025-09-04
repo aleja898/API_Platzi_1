@@ -9,6 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    <link rel="stylesheet" href="{% static 'css/products.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
 </head>
 <body class="light-mode">
     <header class="header">
@@ -24,6 +27,9 @@
         {% block content %}{% endblock %}
     </main>
 
+    <div class="footer" background-color: black, color: white>
+        <p> @2025 Aleja's Store </p>
+    </div>
     <div class="toast-container">
         {% if messages %}
             {% for message in messages %}
