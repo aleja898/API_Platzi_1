@@ -1,0 +1,142 @@
+/* Estilos para las páginas de formulario */
+.form-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 0;
+    min-height: calc(100vh - 80px);
+}
+
+.form-card {
+    width: 100%;
+    max-width: 600px;
+}
+
+.form-card .header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.form-card .header h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-card .header p {
+    color: var(--color-text-dark);
+}
+
+.nav-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.btn-link {
+    font-size: 0.9rem;
+    color: var(--color-secondary);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--color-text-dark);
+}
+
+.form-control, .form-control:focus {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--color-border-light);
+    background-color: var(--color-bg-light);
+    color: var(--color-text-dark);
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+}
+
+.form-control.update-field {
+    border: 2px dashed var(--color-secondary);
+}
+
+textarea.form-control {
+    resize: vertical;
+}
+
+.form-button {
+    width: 100%;
+    font-size: 1.1rem;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.message-container {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.message-container.success {
+    background-color: #e8f9e9;
+    color: #28a745;
+}
+
+.message-container.error {
+    background-color: #ffe8e8;
+    color: #dc3545;
+}
+
+/* Estilos específicos para la página de eliminación */
+.delete-card {
+    text-align: center;
+}
+
+.product-info-to-delete {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.product-details-text {
+    text-align: left;
+}
+
+.product-details-text h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.delete-product-image {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--color-border-light);
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.confirm-delete-btn, .cancel-delete-btn {
+    width: 100%;
+}

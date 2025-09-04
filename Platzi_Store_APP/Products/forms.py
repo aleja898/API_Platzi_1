@@ -55,6 +55,4 @@ class UpdateProductForm(ProductForm):
         
         # Agregar clases CSS específicas para el formulario de actualización
         for field_name, field in self.fields.items():
-            field.widget.attrs.update({
-                'class': field.widget.attrs.get('class', '') + ' update-form-field'
-            })
+            field.widget.attrs['class'] += ' update-field'

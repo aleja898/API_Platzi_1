@@ -2,15 +2,17 @@
 
 {% block title %}Platzi Store - {{ product.title }}{% endblock %}
 
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+
 {% block content %}
 <div class="container detail-page">
     <div class="product-detail-card">
         <div class="product-image-container">
-            <img src="{{ product.images.0 }}" alt="{{ product.title }}" class="detail-product-image" width="20%">
+            <img src="{{ product.images.0 }}" alt="{{ product.title }}" class="detail-product-image">
         </div>
         <div class="product-info-section">
             <div class="product-header">
-                <h1 class="detail-product-title">{{ product.id }}</h1>
                 <h1 class="detail-product-title">{{ product.title }}</h1>
                 <p class="detail-product-price">${{ product.price }}</p>
                 <div class="product-rating">
@@ -23,7 +25,8 @@
                 <p class="detail-product-description">{{ product.description }}</p>
             </div>
             <div class="actions-section">
-                <button class="btn btn-primary add-to-cart-btn">Añadir al Carrito</button>
+                <a href="{% url 'update_product' product.id %}" class="btn btn-primary update-btn">Actualizar</a>
+                <a href="{% url 'delete_product' product.id %}" class="btn btn-accent delete-btn">Eliminar</a>
                 <a href="{% url 'consult_products' %}" class="btn btn-secondary back-btn">Volver al Catálogo</a>
             </div>
         </div>

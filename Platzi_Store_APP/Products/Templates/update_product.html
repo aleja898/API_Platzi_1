@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Platzi Store - Actualizar Producto{% endblock %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+
+{% block content %}
+<div class="form-page">
+    <div class="card form-card">
+        <div class="header">
+            <h2>Actualizar Producto</h2>
+            <p>Modifica los detalles del producto ID: {{ product.id }}</p>
+            <div class="nav-links">
+                <a href="{% url 'detail_product' product.id %}" class="btn-link">Volver al Producto</a>
+                <span>•</span>
+                <a href="{% url 'consult_products' %}" class="btn-link">Ver Catálogo</a>
+            </div>
+        </div>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message-container {% if message.tags == 'success' %}success{% else %}error{% endif %}">
+                    <span>
+                        {% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}❌{% endif %}
+                    </span>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% if form.errors %}
+            <div class="message-container error">
+                <span>❌</span>
+                <div>
+                    <strong>Por favor, corrija los siguientes errores:</strong>
+                    <ul>
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <li>{{ field|title }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<div class="help-text">{{ field.help_text }}</div>{% endif %}
+                </div>
+            {% endfor %}
+            
+            <button type="submit" class="btn btn-primary form-button">
+                Guardar Cambios
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

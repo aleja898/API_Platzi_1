@@ -2,10 +2,13 @@
 
 {% block title %}Platzi Store - Catálogo de Productos{% endblock %}
 
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+
 {% block content %}
 <div class="container products-page">
     <div class="header">
-        <h1><img src="" de Productos</h1>
+        <h1>Catálogo de Productos</h1>
         <p>Explora nuestra exclusiva colección de productos.</p>
     </div>
 
@@ -23,14 +26,15 @@
             <div class="filter-section">
                 <h3>Categorías</h3>
                 <ul>
-                    <li>Electrónica</li>
-                    <li>Ropa</li>
-                    <li>Hogar</li>
+                    <li class="{% if not selected_category %}active{% endif %}">
+                        <a href="{% url 'consult_products' %}">Todas las categorías</a>
+                    </li>
+                    {% for category in categories %}
+                        <li class="{% if selected_category == category.id %}active{% endif %}">
+                            <a href="{% url 'consult_products' %}?category={{ category.id }}">{{ category.name }}</a>
+                        </li>
+                    {% endfor %}
                 </ul>
-            </div>
-            <div class="filter-section">
-                <h3>Rango de Precios</h3>
-                <input type="range" class="price-range">
             </div>
         </aside>
 

@@ -45,8 +45,6 @@ def consult_products(request):
         # Verificar si la respuesta fue exitosa
         if response.status_code == 200:
             products = response.json()
-            # Limitar a 50 productos para mejor rendimiento
-            products = products[:50]
         else:
             error_message = f"Error en la API: Código {response.status_code}"
             
@@ -56,58 +54,32 @@ def consult_products(request):
         error_message = "Error de tiempo: La API tardó demasiado en responder"
     except requests.exceptions.RequestException as e:
         error_message = f"Error en la solicitud: {str(e)}"
-    except Exception as e:
-        error_message = f"Error inesperado: {str(e)}"
     
     context = {
         'products': products,
         'categories': categories,
-        'selected_category': category_filter,
-        'error_message': error_message
+        'error_message': error_message,
+        'selected_category': int(category_filter) if category_filter else None
     }
     
     return render(request, 'consult_products.html', context)
 
-def detail_product(request, pk):
-    """
-    Vista que obtiene los detalles de un producto específico de la API.
-    """
-    try:
-        # Construye la URL para el producto específico
-        api_url = f"{API_BASE_URL}{pk}"
-        response = requests.get(api_url, timeout=10)
-
-        # Si la solicitud es exitosa, obtén los datos del producto
-        if response.status_code == 200:
-            product = response.json()
-            return render(request, 'detail_product.html', {'product': product})
-        elif response.status_code == 404:
-            # Si el producto no se encuentra en la API, muestra un error 404
-            return render(request, 'error_404.html', {'message': 'Producto no encontrado.'}, status=404)
-        else:
-            # Maneja otros códigos de error de la API
-            return render(request, 'error.html', {'message': 'Error al conectar con la API.'})
-    except requests.exceptions.RequestException as e:
-        # Captura errores de red, como problemas de conexión
-        return render(request, 'error.html', {'message': f"Error de conexión: {e}"})
 
 def create_product(request):
     """
-    Vista que maneja la creación de nuevos productos.
-    GET: Muestra el formulario vacío
-    POST: Procesa los datos y envía la solicitud a la API
+    Vista para crear un nuevo producto.
+    Maneja el envío de datos a la API de productos.
     """
     if request.method == 'POST':
         form = ProductForm(request.POST)
-        
         if form.is_valid():
-            # Preparar datos para enviar a la API
+            # Construir el JSON de los datos del producto
             product_data = {
                 'title': form.cleaned_data['title'],
                 'price': float(form.cleaned_data['price']),
                 'description': form.cleaned_data['description'],
-                'images': [form.cleaned_data['images']],  # La API espera una lista
-                'categoryId': 1  # Valor fijo como se requiere
+                'images': [form.cleaned_data['images']],
+                'categoryId': 1 # Categoría predeterminada si se requiere
             }
             
             try:
@@ -141,95 +113,103 @@ def create_product(request):
     
     return render(request, 'create_product.html', {'form': form})
 
-def update_product(request, pk):
+
+def detail_product(request, pk):
     """
-    Vista que maneja la actualización de productos existentes.
-    GET: Muestra el formulario pre-poblado con los datos actuales
-    POST: Procesa los datos y envía la solicitud de actualización a la API
+    Vista que consulta un producto específico por su ID.
+    Maneja errores de conexión y de la API.
     """
-    # Primero obtener el producto actual
+    product = None
     try:
+        # Realizar solicitud GET a la API para un producto específico
         api_url = f"{API_BASE_URL}{pk}"
         response = requests.get(api_url, timeout=10)
         
-        if response.status_code != 200:
-            messages.error(request, 'Producto no encontrado')
+        if response.status_code == 200:
+            product = response.json()
+        else:
+            messages.error(request, f'Error al obtener el producto: Código {response.status_code}')
             return redirect('consult_products')
             
-        product = response.json()
-        
     except requests.exceptions.RequestException as e:
         messages.error(request, f'Error al obtener el producto: {str(e)}')
         return redirect('consult_products')
     
+    return render(request, 'detail_product.html', {'product': product})
+
+
+def update_product(request, pk):
+    """
+    Vista para actualizar un producto existente.
+    Maneja el envío de datos a la API de productos.
+    """
+    api_url = f"{API_BASE_URL}{pk}"
+    
+    try:
+        # Obtener los datos actuales del producto para rellenar el formulario
+        response = requests.get(api_url, timeout=10)
+        if response.status_code != 200:
+            messages.error(request, f'Error al obtener el producto para actualizar: Código {response.status_code}')
+            return redirect('consult_products')
+        
+        product_data = response.json()
+
+    except requests.exceptions.RequestException as e:
+        messages.error(request, f'Error al conectar con la API para actualizar: {str(e)}')
+        return redirect('consult_products')
+    
     if request.method == 'POST':
         form = UpdateProductForm(request.POST)
-        
         if form.is_valid():
-            # Preparar datos para enviar a la API
-            product_data = {
+            updated_data = {
                 'title': form.cleaned_data['title'],
                 'price': float(form.cleaned_data['price']),
                 'description': form.cleaned_data['description'],
                 'images': [form.cleaned_data['images']],
-                'categoryId': product.get('category', {}).get('id', 1)  # Mantener categoría original
             }
             
             try:
-                # Enviar solicitud PUT a la API
-                response = requests.put(
-                    api_url,
-                    json=product_data,
-                    timeout=10,
-                    headers={'Content-Type': 'application/json'}
-                )
+                response = requests.put(api_url, json=updated_data, timeout=10)
                 
                 if response.status_code == 200:
-                    # Producto actualizado exitosamente
                     messages.success(request, 'Producto actualizado exitosamente')
                     return redirect('detail_product', pk=pk)
                 else:
-                    # Error en la actualización
                     messages.error(request, f'Error al actualizar el producto: Código {response.status_code}')
-                    
-            except requests.exceptions.ConnectionError:
-                messages.error(request, 'Error de conexión: No se pudo conectar con la API')
-            except requests.exceptions.Timeout:
-                messages.error(request, 'Error de tiempo: La API tardó demasiado en responder')
+            
             except requests.exceptions.RequestException as e:
-                messages.error(request, f'Error en la solicitud: {str(e)}')
-            except Exception as e:
-                messages.error(request, f'Error inesperado: {str(e)}')
+                messages.error(request, f'Error de solicitud al actualizar: {str(e)}')
     else:
-        # Mostrar formulario pre-poblado para GET
-        initial_data = {
-            'title': product.get('title', ''),
-            'price': product.get('price', 0),
-            'description': product.get('description', ''),
-            'images': product.get('images', [''])[0] if product.get('images') else '',
-        }
-        form = UpdateProductForm(initial=initial_data)
+        # Si es un GET, inicializar el formulario con los datos existentes
+        form = UpdateProductForm(initial={
+            'title': product_data.get('title'),
+            'price': product_data.get('price'),
+            'description': product_data.get('description'),
+            'images': product_data.get('images')[0] if product_data.get('images') else ''
+        })
     
     context = {
         'form': form,
-        'product': product,
+        'product': product_data,
     }
     
     return render(request, 'update_product.html', context)
 
+
 def delete_product(request, pk):
     """
-    Vista que maneja la eliminación de productos.
-    GET: Muestra la página de confirmación de eliminación
-    POST: Procesa la eliminación del producto
+    Vista para eliminar un producto.
+    Maneja la confirmación y la solicitud DELETE a la API.
     """
-    # Primero obtener el producto para mostrar sus detalles
+    api_url = f"{API_BASE_URL}{pk}"
+    
+    # Obtener el producto para mostrar sus detalles en la página de confirmación
+    product = None
     try:
-        api_url = f"{API_BASE_URL}{pk}"
         response = requests.get(api_url, timeout=10)
         
         if response.status_code != 200:
-            messages.error(request, 'Producto no encontrado')
+            messages.error(request, f'Error al obtener el producto para eliminar: Código {response.status_code}')
             return redirect('consult_products')
             
         product = response.json()
