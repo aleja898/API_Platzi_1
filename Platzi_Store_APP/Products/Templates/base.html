@@ -1,65 +1,29 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Platzi Store{% endblock %}</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>Platzi Store - {% block title %}{% endblock %}</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
-    <link rel="stylesheet" href="{% static 'css/products.css' %}">
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'products/base.css' %}">
+    {% block extra_css %}{% endblock %}
 </head>
-<body class="light-mode">
-    <header class="header">
-        <a href="{% url 'home' %}" class="logo">Platzi Store</a>
-        <nav class="nav-links">
-            <a href="{% url 'consult_products' %}" class="nav-link">Productos</a>
-            <a href="{% url 'create_product' %}" class="nav-link">Crear Producto</a>
+<body>
+    <header class="main-header">
+        <nav class="nav-bar">
+            <a href="{% url 'home' %}" class="logo">Aleja's Store</a>
+            <ul class="nav-links">
+                <li><a href="{% url 'catalog' %}">Catálogo</a></li>
+                <li><a href="{% url 'product_add' %}">Agregar producto</a></li>
+            </ul>
         </nav>
-        <button id="dark-mode-toggle" class="btn">☀️</button>
     </header>
 
-    <main>
+    <main class="content-container">
         {% block content %}{% endblock %}
     </main>
-
-    <div class="footer" background-color: black, color: white>
-        <p> @2025 Aleja's Store </p>
-    </div>
-    <div class="toast-container">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="toast {{ message.tags }}">
-                    <span>{% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}❌{% endif %}</span>
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    </div>
-
-    <script>
-        // Dark Mode Toggle
-        const toggle = document.getElementById('dark-mode-toggle');
-        const body = document.body;
-        const currentMode = localStorage.getItem('darkMode') === 'true';
-
-        if (currentMode) {
-            body.classList.add('dark-mode');
-            toggle.textContent = '🌙';
-        } else {
-            toggle.textContent = '☀️';
-        }
-
-        toggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            const isDarkMode = body.classList.contains('dark-mode');
-            toggle.textContent = isDarkMode ? '🌙' : '☀️';
-            localStorage.setItem('darkMode', isDarkMode);
-        });
-    </script>
+    <footer class="footer">
+        <p>© 2023 Aleja's Store. Todos los derechos reservados.</p>
+    </footer>
 </body>
 </html>

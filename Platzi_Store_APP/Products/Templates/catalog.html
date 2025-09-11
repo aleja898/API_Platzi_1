@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Catálogo{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'products/catalog.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="catalog-header">
+        <h1>Catálogo de Productos</h1>
+        <div class="filter-controls">
+            <label for="category-select">Filtrar por categoría:</label>
+            <select id="category-select" onchange="filterProducts(this.value);">
+                <option value="">Todas las categorías</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if selected_category|stringformat:"d" == category.id|stringformat:"d" %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    
+    <div class="product-grid">
+        {% for product in products %}
+            <div class="product-card">
+                <a href="{% url 'product_detail' product.id %}">
+                    {% if product.images and product.images.0 %}
+                        <img src="{{ product.images.0 }}" alt="{{ product.title }}" class="product-image">
+                    {% else %}
+                        <img src="https://via.placeholder.com/300x300.png?text=No+Image" alt="No image available" class="product-image">
+                    {% endif %}
+                </a>
+                <div class="product-info">
+                    <h2 class="product-title">{{ product.title }}</h2>
+                    <p class="product-price">${{ product.price }}</p>
+                    <div class="product-actions">
+                        <a href="{% url 'product_detail' product.id %}" class="btn details-btn">Detalles</a>
+                        <a href="{% url 'product_edit' product.id %}" class="btn edit-btn">Editar</a>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>No se encontraron productos.</p>
+        {% endfor %}
+    </div>
+
+    <script>
+        function filterProducts(categoryId) {
+            let baseUrl = "{% url 'catalog' %}";
+            if (categoryId) {
+                window.location.href = baseUrl + '?category=' + categoryId;
+            } else {
+                window.location.href = baseUrl;
+            }
+        }
+    </script>
+{% endblock %}

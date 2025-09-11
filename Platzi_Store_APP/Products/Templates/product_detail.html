@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'products/detail.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="product-detail-container">
+        <div class="image-gallery">
+            {% for image_url in product.images %}
+                <img src="{{ image_url }}" alt="{{ product.title }}" class="main-image">
+            {% empty %}
+                <img src="https://via.placeholder.com/600x600.png?text=No+Image" alt="No image available" class="main-image">
+            {% endfor %}
+        </div>
+        <div class="product-info-section">
+            <h1 class="product-title">{{ product.title }}</h1>
+            <p class="product-price">${{ product.price }}</p>
+            <p class="product-description">{{ product.description }}</p>
+            
+            <div class="product-meta">
+                <span class="meta-label">Category:</span>
+                <span class="meta-value">{{ product.category.name }}</span>
+            </div>
+
+            <div class="product-actions-detail">
+                <a href="{% url 'product_edit' product.id %}" class="btn edit-btn">Editar Producto</a>
+                <form action="{% url 'product_delete' product.id %}" method="post" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn delete-btn">Eliminar Producto</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

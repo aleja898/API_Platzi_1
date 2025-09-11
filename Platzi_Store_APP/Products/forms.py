@@ -1,58 +1,35 @@
 from django import forms
+import requests
 
 class ProductForm(forms.Form):
-    """
-    Formulario para crear un nuevo producto.
-    Campos requeridos por la API de productos.
-    """
-    title = forms.CharField(
-        max_length=200,
-        label='Título del Producto',
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Ingresa el título del producto'
-        })
-    )
+    title = forms.CharField(label='Producto', max_length=200)
+    price = forms.IntegerField(label='Precio', min_value=0)
+    description = forms.CharField(widget=forms.Textarea, label='Descripción')
+    images = forms.CharField(label='Urls de las imágenes (separadas por comas)', widget=forms.Textarea)
     
-    price = forms.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        label='Precio',
-        widget=forms.NumberInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Precio en USD',
-            'step': '0.01'
-        })
-    )
-    
-    description = forms.CharField(
-        label='Descripción',
-        widget=forms.Textarea(attrs={
-            'class': 'form-control',
-            'rows': 4,
-            'placeholder': 'Describe el producto'
-        })
-    )
-    
-    images = forms.URLField(
-        label='URL de la Imagen',
-        widget=forms.URLInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'https://ejemplo.com/imagen.jpg'
-        }),
-        help_text='Proporciona la URL de una imagen del producto'
-    )
+    # Category field with dynamic choices
+    category_id = forms.ChoiceField(label='Categoria')
 
-class UpdateProductForm(ProductForm):
-    """
-    Formulario para actualizar un producto existente.
-    Hereda de ProductForm y mantiene los mismos campos y validaciones.
-    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Personalizar ayuda para el contexto de actualización
-        self.fields['images'].help_text = 'Actualiza la URL de la imagen del producto'
+        try:
+            response = requests.get("https://api.escuelajs.co/api/v1/categories")
+            response.raise_for_status()
+            categories = response.json()
+            # Create a list of tuples for the choices: (value, label)
+            category_choices = [(cat['id'], cat['name']) for cat in categories]
+            self.fields['category_id'].choices = category_choices
+        except requests.exceptions.RequestException:
+            # Handle API call failure gracefully
+            self.fields['category_id'].choices = [('', 'Failed to load categories')]
+
+    def clean_images(self):
+        # Validate that each part of the comma-separated string is a URL
+        images_string = self.cleaned_data.get('images', '')
+        image_urls = [url.strip() for url in images_string.split(',')]
         
-        # Agregar clases CSS específicas para el formulario de actualización
-        for field_name, field in self.fields.items():
-            field.widget.attrs['class'] += ' update-field'
+        # A simple check for URL format
+        for url in image_urls:
+            if not (url.startswith('http://') or url.startswith('https://')):
+                raise forms.ValidationError("Each image URL must be a valid HTTP or HTTPS URL.")
+        return images_string

@@ -4,9 +4,9 @@ from . import views
 # URLs de la aplicación products
 urlpatterns = [
     path('', views.home, name='home'),
-    path('products/', views.consult_products, name='consult_products'),
-    path('products/create/', views.create_product, name='create_product'),
-    path('products/<int:pk>/', views.detail_product, name='detail_product'),
-    path('products/<int:pk>/update/', views.update_product, name='update_product'),
-    path('products/<int:pk>/delete/', views.delete_product, name='delete_product'),
+    path('catalog/', views.catalog, name='catalog'),
+    path('catalog/<int:product_id>/', views.product_detail, name='product_detail'),
+    path('catalog/add/', views.product_add, name='product_add'),
+    path('catalog/<int:product_id>/edit/', views.product_edit, name='product_edit'),
+    path('catalog/<int:product_id>/delete/', views.product_delete, name='product_delete'),
 ]
