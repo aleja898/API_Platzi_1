@@ -1,164 +1,86 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-:root {
-    --primary-color: #5d25e0; /* Original primary color */
-    --soft-lilac: #e6e6fa;    /* Soft Lilac for background */
-    --text-color: #333;
-    --bg-color: #fff;
-    --card-bg: #fff;
-    --border-color: #ddd;
-    --shadow-color: rgba(0, 0, 0, 0.05);
-
-    /* New button colors */
-    --details-btn-color: #3498db; /* Blue for details */
-    --edit-btn-color: #f39c12;    /* Orange for edit */
-    --delete-btn-color: #e74c3c;  /* Red for delete */
-    --add-btn-color: #2ecc71;     /* Green for add/primary action */
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
+/* General body styles for a dark purple theme */
 body {
-    font-family: 'Roboto', sans-serif;
-    color: var(--text-color);
-    background-color: var(--soft-lilac); /* Changed to soft lilac */
+    background-color: #380038; /* A darker purple */
+    color: #f8f9fa; /* Light text color for contrast */
 }
 
-/* --- Header & Navigation --- */
-.main-header {
-    background-color: var(--bg-color);
-    box-shadow: 0 2px 4px var(--shadow-color);
-    padding: 1rem 2rem;
+/* Header and navigation bar styles */
+.main-header .nav-bar {
+    background-color: #5a005a; /* A slightly darker shade for the navbar */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.nav-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-section.hero-section {
-    background-color: #dad9ff;
-    text-align: center;
-    margin-top: 7rem;
-    transition: background-color 0.3s ease;
-}
-.footer {
-    background-color: #080808;
-    padding: 1.8rem;
-    text-align: center;
-    color: #fff;
-    margin-top: 7rem;
-}
-.logo {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    text-decoration: none;
+/* Navbar brand and links */
+.main-header .nav-bar .navbar-brand,
+.main-header .nav-bar .nav-link {
+    color: #f8f9fa !important;
 }
 
-.nav-links {
-    list-style: none;
-    display: flex;
-    gap: 2rem;
+/* Hover effect for navbar links */
+.main-header .nav-bar .nav-link:hover {
+    color: #e0e0e0 !important;
 }
 
-.nav-links a {
-    text-decoration: none;
-    color: var(--text-color);
-    font-weight: 500;
-    transition: color 0.2s ease;
+/* Dropdown menu styles */
+.dropdown-menu {
+    background: rgba(90, 0, 90, 0.95); /* Adjusted dropdown background */
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.nav-links a:hover {
-    color: var(--primary-color);
+/* Dropdown item styles */
+.dropdown-item {
+    color: #f8f9fa;
 }
 
-/* --- Main Content --- */
-.content-container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+/* Hover effect for dropdown items */
+.dropdown-item:hover {
+    background: linear-gradient(135deg, #7a007a 0%, #9a009a 100%); /* Adjusted gradient */
+    color: white;
 }
 
-/* --- Generic Button Styles (Updated to use new color variables) --- */
-.btn {
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    cursor: pointer;
-    text-align: center; /* Ensure text is centered */
-    display: inline-block; /* Allows padding and width to work */
+/* Styles for light outline buttons */
+.btn-outline-light {
+    color: #f8f9fa;
+    border-color: #f8f9fa;
 }
 
-.btn.primary-btn { /* Used for general primary actions, like "Explore Catalog" */
-    background-color: var(--add-btn-color); /* Greenish for primary/add */
-    color: #fff;
-    border-color: var(--add-btn-color);
+/* Hover effect for light outline buttons */
+.btn-outline-light:hover {
+    background-color: #f8f9fa;
+    color: #5a005a;
 }
 
-.btn.primary-btn:hover {
-    background-color: #27ae60; /* Darker green on hover */
-    border-color: #27ae60;
+/* Styles for light buttons */
+.btn-light {
+    background-color: #f8f9fa;
+    color: #5a005a;
 }
 
-.btn.secondary-btn { /* Used for "Add New Product" on homepage */
-    background-color: transparent;
-    color: var(--primary-color);
-    border-color: var(--primary-color);
+/* Hover effect for light buttons */
+.btn-light:hover {
+    background-color: #e0e0e0;
+    color: #5a005a;
 }
 
-.btn.secondary-btn:hover {
-    background-color: var(--primary-color);
-    color: #fff;
+/* Custom text colors for the theme */
+.text-primary {
+    color: #bb86fc !important; /* Adjusted primary color for the new background */
 }
 
-/* New specific button styles */
-.btn.details-btn {
-    background-color: var(--details-btn-color);
-    color: #fff;
-    border-color: var(--details-btn-color);
-}
-.btn.details-btn:hover {
-    background-color: #2980b9; /* Darker blue */
-    border-color: #2980b9;
+.text-danger {
+    color: #cf6679 !important; /* Adjusted danger color */
 }
 
-.btn.edit-btn {
-    background-color: var(--edit-btn-color);
-    color: #fff;
-    border-color: var(--edit-btn-color);
-}
-.btn.edit-btn:hover {
-    background-color: #e67e22; /* Darker orange */
-    border-color: #e67e22;
+.text-success {
+    color: #03dac6 !important; /* Adjusted success color */
 }
 
-.btn.delete-btn {
-    background-color: var(--delete-btn-color);
-    color: #fff;
-    border-color: var(--delete-btn-color);
-}
-.btn.delete-btn:hover {
-    background-color: #c0392b; /* Darker red */
-    border-color: #c0392b;
+.text-warning {
+    color: #ffc107 !important; /* Warning color */
 }
 
-.btn.submit-btn { /* Used for form submission */
-    background-color: var(--primary-color);
-    color: #fff;
-    border-color: var(--primary-color);
-}
-
-.btn.submit-btn:hover {
-    background-color: #4b1aab; /* Darker primary color */
-    border-color: #4b1aab;
+.text-secondary {
+    color: #a0a0a0 !important; /* Adjusted secondary color */
 }

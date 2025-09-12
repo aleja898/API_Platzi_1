@@ -72,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'platzi_store_app.wsgi.application'
+WSGI_APPLICATION = 'Platzi_Store_APP.wsgi.application'
 
 
 # Database

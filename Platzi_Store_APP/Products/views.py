@@ -1,4 +1,5 @@
 import requests
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
@@ -12,6 +13,7 @@ def home(request):
     Renders the homepage.
     """
     return render(request, 'home.html')
+
 
 def catalog(request):
     """
@@ -48,7 +50,7 @@ def product_detail(request, product_id):
         return render(request, 'product_detail.html', {'product': product})
     except requests.exceptions.RequestException as e:
         return HttpResponse(f"Error fetching product: {e}", status=500)
-
+@login_required
 def product_add(request):
     """
     Handles the creation of a new product.

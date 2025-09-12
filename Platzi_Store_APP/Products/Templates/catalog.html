@@ -26,21 +26,23 @@
     <div class="product-grid">
         {% for product in products %}
             <div class="product-card">
-                <a href="{% url 'product_detail' product.id %}">
+                <a href="{% url 'Products:product_detail' product.id %}"></a>
                     {% if product.images and product.images.0 %}
                         <img src="{{ product.images.0 }}" alt="{{ product.title }}" class="product-image">
                     {% else %}
                         <img src="https://via.placeholder.com/300x300.png?text=No+Image" alt="No image available" class="product-image">
                     {% endif %}
                 </a>
+                {% if user.is_authenticated %}
                 <div class="product-info">
                     <h2 class="product-title">{{ product.title }}</h2>
                     <p class="product-price">${{ product.price }}</p>
                     <div class="product-actions">
-                        <a href="{% url 'product_detail' product.id %}" class="btn details-btn">Detalles</a>
-                        <a href="{% url 'product_edit' product.id %}" class="btn edit-btn">Editar</a>
+                        <a href="{% url 'Products:product_detail' product.id %}" class="btn details-btn">Detalles</a>
+                        <a href="{% url 'Products:product_edit' product.id %}" class="btn edit-btn">Editar</a>
                     </div>
                 </div>
+                {% endif %}
             </div>
         {% empty %}
             <p>No se encontraron productos.</p>
@@ -49,7 +51,7 @@
 
     <script>
         function filterProducts(categoryId) {
-            let baseUrl = "{% url 'catalog' %}";
+            let baseUrl = "{% url 'Products:catalog' %}";
             if (categoryId) {
                 window.location.href = baseUrl + '?category=' + categoryId;
             } else {

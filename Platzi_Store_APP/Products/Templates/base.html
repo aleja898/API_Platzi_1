@@ -6,24 +6,235 @@
     <title>Platzi Store - {% block title %}{% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'products/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/custom_styles.css' %}"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <header class="main-header">
-        <nav class="nav-bar">
-            <a href="{% url 'home' %}" class="logo">Aleja's Store</a>
-            <ul class="nav-links">
-                <li><a href="{% url 'catalog' %}">Catálogo</a></li>
-                <li><a href="{% url 'product_add' %}">Agregar producto</a></li>
-            </ul>
+        <nav class="nav-bar navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a href="{% url 'Products:home' %}" class="logo navbar-brand">Aleja's Store</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="nav-links navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'Products:catalog' %}">Catálogo</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'Products:product_add' %}">Agregar producto</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex me-3" method="get" action="{% url 'Products:catalog' %}">
+                        <div class="input-group" style="max-width: 300px;">
+                            <input class="form-control border-0" type="search" name="search" 
+                                placeholder="Buscar productos..." 
+                                value="{{ request.GET.search }}">
+                            <button class="btn btn-outline-light border-0" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <ul class="navbar-nav">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" 
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="user-avatar me-2">
+                                        <i class="fas fa-user-circle fa-lg"></i>
+                                    </div>
+                                    <div class="user-info d-none d-lg-block">
+                                        <small class="d-block">¡Hola!</small>
+                                        <strong>{{ user.first_name|default:user.username }}</strong>
+                                    </div>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="min-width: 250px;">
+                                    <li>
+                                        <div class="dropdown-header bg-light text-dark">
+                                            <div class="d-flex align-items-center">
+                                                <i class="fas fa-user-circle fa-2x text-primary me-2"></i>
+                                                <div>
+                                                    <strong>{{ user.get_full_name|default:user.username }}</strong>
+                                                    <small class="d-block text-muted">{{ user.email }}</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fas fa-user-edit text-primary"></i> Mi Perfil
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fas fa-heart text-danger"></i> Mis Favoritos
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fas fa-shopping-bag text-success"></i> Mis Productos
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="fas fa-cog text-secondary"></i> Configuración
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="{% url 'accounts:logout' %}">
+                                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li class="nav-item me-2">
+                                <a class="nav-link btn btn-outline-light border-0 px-3" 
+                                href="{% url 'accounts:login' %}">
+                                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-light text-primary px-3 fw-bold" 
+                                href="{% url 'accounts:register' %}">
+                                    <i class="fas fa-user-plus"></i> Registrarse
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
         </nav>
     </header>
-
-    <main class="content-container">
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0" role="alert">
+                    <div class="d-flex align-items-center">
+                        <div class="me-2">
+                            {% if message.tags == 'error' or message.tags == 'danger' %}
+                                <i class="fas fa-exclamation-triangle fa-lg"></i>
+                            {% elif message.tags == 'success' %}
+                                <i class="fas fa-check-circle fa-lg"></i>
+                            {% elif message.tags == 'warning' %}
+                                <i class="fas fa-exclamation-circle fa-lg"></i>
+                            {% elif message.tags == 'info' %}
+                                <i class="fas fa-info-circle fa-lg"></i>
+                            {% else %}
+                                <i class="fas fa-bell fa-lg"></i>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">{{ message }}</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <main class="container py-4">
         {% block content %}{% endblock %}
     </main>
-    <footer class="footer">
-        <p>© 2023 Aleja's Store. Todos los derechos reservados.</p>
+
+    <footer class="bg-dark text-center py-4 mt-5 border-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-md-start">
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-code text-primary"></i> 
+                        <strong>Django Shop</strong> &copy; 2024
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted mb-0">
+                        Hecho por Alejandra <i class="fas fa-heart text-danger"></i> y 
+                        <i class="fab fa-python text-warning"></i> Django
+                    </p>
+                </div>
+            </div>
+        </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-dismiss alerts after 5 seconds (except error alerts)
+            const alerts = document.querySelectorAll('.alert:not(.alert-danger)');
+            alerts.forEach(function(alert) {
+                setTimeout(function() {
+                    if (alert && document.body.contains(alert)) {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    }
+                }, 5000);
+            });
+
+            // Improve dropdown menu behavior
+            const dropdownToggle = document.getElementById('navbarDropdown');
+            if (dropdownToggle) {
+                dropdownToggle.addEventListener('shown.bs.dropdown', function() {
+                    const dropdownMenu = this.nextElementSibling;
+                    dropdownMenu.style.animation = 'fadeIn 0.3s ease-in-out';
+                });
+            }
+
+            // Search form enhancement
+            const searchInput = document.querySelector('input[name="search"]');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        this.form.submit();
+                    }
+                });
+            }
+
+            // Add loading state to form submissions
+            const forms = document.querySelectorAll('form');
+            forms.forEach(function(form) {
+                form.addEventListener('submit', function() {
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    if (submitBtn && !submitBtn.disabled) {
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Procesando...';
+                        
+                        setTimeout(function() {
+                            if (submitBtn.disabled) {
+                                submitBtn.disabled = false;
+                                submitBtn.innerHTML = originalText;
+                            }
+                        }, 10000);
+                    }
+                });
+            });
+        });
+
+        // Add some CSS animations - Estas animaciones se moverán al custom_styles.css
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            
+            .navbar-brand:hover {
+                transform: scale(1.05);
+                transition: transform 0.2s ease-in-out;
+            }
+            
+            .nav-link:hover {
+                transform: translateY(-1px);
+                transition: transform 0.2s ease-in-out;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+    {% block extra_js %}{% endblock %}
 </body>
 </html>
